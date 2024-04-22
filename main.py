@@ -131,6 +131,24 @@ vol_2022 = final_df.loc[(final_df['date'] >= '2022-01-01') & (final_df['date'] <
 vol_2023 = final_df.loc[(final_df['date'] >= '2023-01-01') & (final_df['date'] < '2024-01-01')]['trade_vol'].sum()
 vol_2024 = final_df.loc[(final_df['date'] >= '2024-01-01') & (final_df['date'] < '2025-01-01')]['trade_vol'].sum()
 
+vol_1Q21 = final_df.loc[(final_df['date'] >= '2021-01-01') & (final_df['date'] < '2021-04-01')]['trade_vol'].sum()
+vol_2Q21 = final_df.loc[(final_df['date'] >= '2021-04-01') & (final_df['date'] < '2021-07-01')]['trade_vol'].sum()
+vol_3Q21 = final_df.loc[(final_df['date'] >= '2021-07-01') & (final_df['date'] < '2021-10-01')]['trade_vol'].sum()
+vol_4Q21 = final_df.loc[(final_df['date'] >= '2021-10-01') & (final_df['date'] < '2022-01-01')]['trade_vol'].sum()
+
+vol_1Q22 = final_df.loc[(final_df['date'] >= '2022-01-01') & (final_df['date'] < '2022-04-01')]['trade_vol'].sum()
+vol_2Q22 = final_df.loc[(final_df['date'] >= '2022-04-01') & (final_df['date'] < '2022-07-01')]['trade_vol'].sum()
+vol_3Q22 = final_df.loc[(final_df['date'] >= '2022-07-01') & (final_df['date'] < '2022-10-01')]['trade_vol'].sum()
+vol_4Q22 = final_df.loc[(final_df['date'] >= '2022-10-01') & (final_df['date'] < '2023-01-01')]['trade_vol'].sum()
+
+vol_1Q23 = final_df.loc[(final_df['date'] >= '2023-01-01') & (final_df['date'] < '2023-04-01')]['trade_vol'].sum()
+vol_2Q23 = final_df.loc[(final_df['date'] >= '2023-04-01') & (final_df['date'] < '2023-07-01')]['trade_vol'].sum()
+vol_3Q23 = final_df.loc[(final_df['date'] >= '2023-07-01') & (final_df['date'] < '2023-10-01')]['trade_vol'].sum()
+vol_4Q23 = final_df.loc[(final_df['date'] >= '2023-10-01') & (final_df['date'] < '2024-01-01')]['trade_vol'].sum()
+
+vol_1Q24 = final_df.loc[(final_df['date'] >= '2024-01-01') & (final_df['date'] < '2024-04-01')]['trade_vol'].sum()
+vol_2Q24 = final_df.loc[(final_df['date'] >= '2024-04-01') & (final_df['date'] < '2024-07-01')]['trade_vol'].sum()
+
 plt_data = final_df[['date', 'trade_vol']]
 plt_data.set_index(['date'], inplace=True)
 plt_data = plt_data.plot().get_figure()
@@ -155,3 +173,48 @@ print(tabulate([
     ['2023', round(vol_2023)],
     ['2024', round(vol_2024)],
     ]))
+
+print(tabulate([
+    ['1Q21', round(vol_1Q21)],
+    ['2Q21', round(vol_2Q21)],
+    ['3Q21', round(vol_3Q21)],
+    ['4Q21', round(vol_4Q21)],
+
+    ['1Q22', round(vol_1Q22)],
+    ['2Q22', round(vol_2Q22)],
+    ['3Q22', round(vol_3Q22)],
+    ['4Q22', round(vol_4Q22)],
+
+    ['1Q23', round(vol_1Q23)],
+    ['2Q23', round(vol_2Q23)],
+    ['3Q23', round(vol_3Q23)],
+    ['4Q23', round(vol_4Q23)],
+
+    ['1Q24', round(vol_1Q24)],
+    ['2Q24', round(vol_2Q24)],
+    ]))
+
+
+sr = [
+    ['1Q21', round(vol_1Q21)],
+    ['2Q21', round(vol_2Q21)],
+    ['3Q21', round(vol_3Q21)],
+    ['4Q21', round(vol_4Q21)],
+
+    ['1Q22', round(vol_1Q22)],
+    ['2Q22', round(vol_2Q22)],
+    ['3Q22', round(vol_3Q22)],
+    ['4Q22', round(vol_4Q22)],
+
+    ['1Q23', round(vol_1Q23)],
+    ['2Q23', round(vol_2Q23)],
+    ['3Q23', round(vol_3Q23)],
+    ['4Q23', round(vol_4Q23)],
+
+    ['1Q24', round(vol_1Q24)],
+    ['2Q24', round(vol_2Q24)],
+    ]
+
+quarterly_df = pd.DataFrame(sr)
+print(quarterly_df)
+quarterly_df.to_csv(data_file_path + '/quarterly.csv')

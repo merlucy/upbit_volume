@@ -3,6 +3,7 @@ import pandas as pd
 import time, os, pytz
 from datetime import datetime, timedelta
 import matplotlib.pyplot as plt
+from tabulate import tabulate
 
 def get_data(upbit:Upbit, markets):
 
@@ -109,7 +110,27 @@ for market in btc_markets:
         val_col[i] = val_col[i] + raw_vals[i]
 
 
+final_df = pd.DataFrame()
+final_df['date'] = index_col
+final_df['trade_vol'] = val_col
+final_df['trade_vol'] = final_df['trade_vol']/1_000_000_000
+final_df = final_df.iloc[::-1]
+final_df = final_df.iloc[-200:]
+
 btc_data = pd.read_parquet(data_file_path + '/KRW-BTC_weekly.parquet')
+btc_data['candle_date_time_utc'] = btc_data['candle_date_time_utc'].apply(lambda x: x[:-9])
+
+print('btc data')
+print(btc_data.tail(5))
+
+
+final_df = final_df.merge(btc_data, left_on='date', right_on='candle_date_time_utc')
+final_df['trade_vol'] = final_df['trade_vol']*final_df['trade_price']
+
+print('final')
+print(final_df.tail(5))
+
+"""
 price_data = list(btc_data['opening_price'].values)
 
 len_date_with_prc = len(btc_data)
@@ -117,11 +138,7 @@ len_date_with_prc = len(btc_data)
 for i in range(len_date_with_prc):
     val_col[i] = val_col[i] * price_data[i]
 
-final_df = pd.DataFrame()
-final_df['date'] = index_col
-final_df['trade_vol'] = val_col
-final_df = final_df.iloc[::-1]
-final_df = final_df.iloc[-200:]
+"""
 
 final_df['date'] = pd.to_datetime(final_df['date'])
 
@@ -133,3 +150,80 @@ plt_data.set_index(['date'], inplace=True)
 plt_data = plt_data.plot().get_figure()
 plt_data.savefig('img_btc.png')
 #print(upbit.get_candles_week(market='KRW-SEI', count=200).json())
+
+vol_2020 = final_df.loc[(final_df['date'] >= '2020-01-01') & (final_df['date'] < '2021-01-01')]['trade_vol'].sum()
+vol_2021 = final_df.loc[(final_df['date'] >= '2021-01-01') & (final_df['date'] < '2022-01-01')]['trade_vol'].sum()
+vol_2022 = final_df.loc[(final_df['date'] >= '2022-01-01') & (final_df['date'] < '2023-01-01')]['trade_vol'].sum()
+vol_2023 = final_df.loc[(final_df['date'] >= '2023-01-01') & (final_df['date'] < '2024-01-01')]['trade_vol'].sum()
+vol_2024 = final_df.loc[(final_df['date'] >= '2024-01-01') & (final_df['date'] < '2025-01-01')]['trade_vol'].sum()
+
+vol_1Q21 = final_df.loc[(final_df['date'] >= '2021-01-01') & (final_df['date'] < '2021-04-01')]['trade_vol'].sum()
+vol_2Q21 = final_df.loc[(final_df['date'] >= '2021-04-01') & (final_df['date'] < '2021-07-01')]['trade_vol'].sum()
+vol_3Q21 = final_df.loc[(final_df['date'] >= '2021-07-01') & (final_df['date'] < '2021-10-01')]['trade_vol'].sum()
+vol_4Q21 = final_df.loc[(final_df['date'] >= '2021-10-01') & (final_df['date'] < '2022-01-01')]['trade_vol'].sum()
+
+vol_1Q22 = final_df.loc[(final_df['date'] >= '2022-01-01') & (final_df['date'] < '2022-04-01')]['trade_vol'].sum()
+vol_2Q22 = final_df.loc[(final_df['date'] >= '2022-04-01') & (final_df['date'] < '2022-07-01')]['trade_vol'].sum()
+vol_3Q22 = final_df.loc[(final_df['date'] >= '2022-07-01') & (final_df['date'] < '2022-10-01')]['trade_vol'].sum()
+vol_4Q22 = final_df.loc[(final_df['date'] >= '2022-10-01') & (final_df['date'] < '2023-01-01')]['trade_vol'].sum()
+
+vol_1Q23 = final_df.loc[(final_df['date'] >= '2023-01-01') & (final_df['date'] < '2023-04-01')]['trade_vol'].sum()
+vol_2Q23 = final_df.loc[(final_df['date'] >= '2023-04-01') & (final_df['date'] < '2023-07-01')]['trade_vol'].sum()
+vol_3Q23 = final_df.loc[(final_df['date'] >= '2023-07-01') & (final_df['date'] < '2023-10-01')]['trade_vol'].sum()
+vol_4Q23 = final_df.loc[(final_df['date'] >= '2023-10-01') & (final_df['date'] < '2024-01-01')]['trade_vol'].sum()
+
+vol_1Q24 = final_df.loc[(final_df['date'] >= '2024-01-01') & (final_df['date'] < '2024-04-01')]['trade_vol'].sum()
+vol_2Q24 = final_df.loc[(final_df['date'] >= '2024-04-01') & (final_df['date'] < '2024-07-01')]['trade_vol'].sum()
+
+print(tabulate([
+    ['2020', round(vol_2020)],
+    ['2021', round(vol_2021)],
+    ['2022', round(vol_2022)],
+    ['2023', round(vol_2023)],
+    ['2024', round(vol_2024)],
+    ]))
+
+print(tabulate([
+    ['1Q21', round(vol_1Q21)],
+    ['2Q21', round(vol_2Q21)],
+    ['3Q21', round(vol_3Q21)],
+    ['4Q21', round(vol_4Q21)],
+
+    ['1Q22', round(vol_1Q22)],
+    ['2Q22', round(vol_2Q22)],
+    ['3Q22', round(vol_3Q22)],
+    ['4Q22', round(vol_4Q22)],
+
+    ['1Q23', round(vol_1Q23)],
+    ['2Q23', round(vol_2Q23)],
+    ['3Q23', round(vol_3Q23)],
+    ['4Q23', round(vol_4Q23)],
+
+    ['1Q24', round(vol_1Q24)],
+    ['2Q24', round(vol_2Q24)],
+    ]))
+
+
+sr = [
+    ['1Q21', round(vol_1Q21)],
+    ['2Q21', round(vol_2Q21)],
+    ['3Q21', round(vol_3Q21)],
+    ['4Q21', round(vol_4Q21)],
+
+    ['1Q22', round(vol_1Q22)],
+    ['2Q22', round(vol_2Q22)],
+    ['3Q22', round(vol_3Q22)],
+    ['4Q22', round(vol_4Q22)],
+
+    ['1Q23', round(vol_1Q23)],
+    ['2Q23', round(vol_2Q23)],
+    ['3Q23', round(vol_3Q23)],
+    ['4Q23', round(vol_4Q23)],
+
+    ['1Q24', round(vol_1Q24)],
+    ['2Q24', round(vol_2Q24)],
+    ]
+
+quarterly_df = pd.DataFrame(sr)
+print(quarterly_df)
+quarterly_df.to_csv(data_file_path + '/quarterly_btc.csv')
